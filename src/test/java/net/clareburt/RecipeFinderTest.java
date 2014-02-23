@@ -45,7 +45,7 @@ public class RecipeFinderTest {
 	@Test
 	public void shouldReturnValidResponseForValidFilenames() throws ParsingException {
 		final String suggestion = recipeFinder.generateRecipesFromFilenames("src\\test\\resources\\fridge.csv", "src\\test\\resources\\recipes.json");
-		assertEquals("grilled cheese on toast", suggestion);
+		assertEquals("salad sandwich", suggestion);
 	}
 
 }
