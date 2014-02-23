@@ -2,9 +2,9 @@ package net.clareburt;
 
 import net.clareburt.model.Ingredient;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Justin Clareburt
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class IngredientsParser {
 
-	public Collection<Ingredient> getIngredients(Collection<String[]> csvData) {
+	public Collection<Ingredient> getIngredients(Collection<String[]> csvData) throws ParseException {
 		final ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
 		if (csvData != null) {
 			for (String[] row : csvData) {
