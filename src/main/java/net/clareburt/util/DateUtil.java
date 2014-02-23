@@ -1,4 +1,4 @@
-package net.clareburt;
+package net.clareburt.util;
 
 import java.util.Date;
 
