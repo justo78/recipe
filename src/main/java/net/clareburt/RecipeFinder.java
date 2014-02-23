@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Collection;
 
 /**
@@ -75,6 +76,8 @@ public class RecipeFinder {
 			throw new ParsingException("File not found: " + fridgeCsvFilename);
 		} catch (IOException e) {
 			throw new ParsingException("Error reading file: " + fridgeCsvFilename);
+		} catch (ParseException e) {
+			throw new ParsingException("Error parsing date: " + e.getMessage());
 		}
 		return fridgeItems;
 	}
