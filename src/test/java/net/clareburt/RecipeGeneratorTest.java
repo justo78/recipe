@@ -6,6 +6,7 @@ import net.clareburt.model.Unit;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -49,7 +50,7 @@ public class RecipeGeneratorTest {
 	}
 
 	@Test
-	public void shouldIgnoreRecipesWithIngredientsOutOfDate() {
+	public void shouldIgnoreRecipesWithIngredientsOutOfDate() throws ParseException {
 		// Note: Cheese is out of date so cheese toasty should not be returned
 		final ArrayList<Ingredient> fridgeItems = new ArrayList<Ingredient>();
 		fridgeItems.add(createIngredientWithDate("bread", 2, Unit.slices, "15/04/2014"));
@@ -64,7 +65,7 @@ public class RecipeGeneratorTest {
 	}
 
 	@Test
-	public void shouldIgnoreRecipesWithNotEnoughIngredients() {
+	public void shouldIgnoreRecipesWithNotEnoughIngredients() throws ParseException {
 		final ArrayList<Ingredient> fridgeItems = new ArrayList<Ingredient>();
 		fridgeItems.add(createIngredientWithDate("bread", 2, Unit.slices, "21/04/2014"));
 		fridgeItems.add(createIngredientWithDate("cheese", 2, Unit.slices, "15/04/2014"));
@@ -80,7 +81,7 @@ public class RecipeGeneratorTest {
 	}
 
 	@Test
-	public void shouldReturnRecipeWithClosestIngredientsUseByDate() {
+	public void shouldReturnRecipeWithClosestIngredientsUseByDate() throws ParseException {
 		final ArrayList<Ingredient> fridgeItems = new ArrayList<Ingredient>();
 		fridgeItems.add(createIngredientWithDate("bread", 2, Unit.slices, "21/04/2014"));
 		fridgeItems.add(createIngredientWithDate("cheese", 2, Unit.slices, "25/04/2014"));
@@ -95,7 +96,7 @@ public class RecipeGeneratorTest {
 	}
 
 	@Test
-	public void shouldHandleIngredientsWithDifferentUseByDates() {
+	public void shouldHandleIngredientsWithDifferentUseByDates() throws ParseException {
 		final ArrayList<Ingredient> fridgeItems = new ArrayList<Ingredient>();
 		fridgeItems.add(createIngredientWithDate("bread", 2, Unit.slices, "21/04/2014"));
 		fridgeItems.add(createIngredientWithDate("cheese", 2, Unit.slices, "25/04/2014"));
@@ -111,7 +112,7 @@ public class RecipeGeneratorTest {
 	}
 
 	@Test
-	public void shouldCompareDatesOfAllIngredients() {
+	public void shouldCompareDatesOfAllIngredients() throws ParseException {
 		final ArrayList<Ingredient> fridgeItems = new ArrayList<Ingredient>();
 		fridgeItems.add(createIngredientWithDate("bread", 10, Unit.slices, "25/12/2014"));
 		fridgeItems.add(createIngredientWithDate("cheese", 10, Unit.slices, "25/12/2014"));
@@ -128,7 +129,7 @@ public class RecipeGeneratorTest {
 	}
 
 	@Test
-	public void shouldFavourRecipeWithMostIngredients() {
+	public void shouldFavourRecipeWithMostIngredients() throws ParseException {
 		final ArrayList<Ingredient> fridgeItems = new ArrayList<Ingredient>();
 		fridgeItems.add(createIngredientWithDate("bread", 10, Unit.slices, "25/12/2014"));
 		fridgeItems.add(createIngredientWithDate("cheese", 10, Unit.slices, "25/12/2014"));
@@ -233,7 +234,7 @@ public class RecipeGeneratorTest {
 		return ingredient;
 	}
 
-	private Ingredient createIngredientWithDate(String item, int amount, Unit unit, String useByStr) {
+	private Ingredient createIngredientWithDate(String item, int amount, Unit unit, String useByStr) throws ParseException {
 		final Ingredient ingredient = createIngredient(item, amount, unit);
 		ingredient.setUseBy(useByStr);
 		return ingredient;
