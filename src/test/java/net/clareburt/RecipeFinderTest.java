@@ -48,4 +48,11 @@ public class RecipeFinderTest {
 		assertEquals("salad sandwich", suggestion);
 	}
 
+	//-------- Test the static main method --------
+
+	@Test
+	public void testMain_runsWithoutError() {
+		RecipeFinder.main(new String[]{"src\\test\\resources\\fridge.csv", "src\\test\\resources\\recipes.json"});
+	}
+
 }
