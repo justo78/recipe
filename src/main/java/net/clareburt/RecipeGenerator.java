@@ -34,7 +34,7 @@ public class RecipeGenerator {
 				// Look for ingredient in fridge
 				final Ingredient ingredient = findItemWithClosestUseByDate(fridgeItems, recipeIngredient, currentDate);
 				if (ingredient == null) {
-					// This ingredient was not found. Immediately stop checking other recipe ingredients.
+					// This ingredient was not found. Immediately stop checking the ingredients in this recipe.
 					continue recipeLoop;
 				}
 				ingredients.add(ingredient);
@@ -67,60 +67,68 @@ public class RecipeGenerator {
 		if (recipes.isEmpty()) {
 			return DEFAULT_RECIPE;
 		}
-		Recipe bestRecipe = new Recipe();
-		recipeLoop: for (String recipeName : recipes.keySet()) {
+		final Recipe bestRecipe = new Recipe();
+		for (String recipeName : recipes.keySet()) {
 			final Collection<Ingredient> newRecipeIngredients = recipes.get(recipeName);
+			// The first recipe will be used as the best recipe
 			if (bestRecipe.getName() == null) {
 				updateBestRecipe(bestRecipe, recipeName, newRecipeIngredients);
 				continue;
 			}
-
-			// Copy the list of ingredients
-			final Collection<Ingredient> newIngredients = new HashSet<Ingredient>(newRecipeIngredients);
-			final Collection<Ingredient> bestIngredients = new HashSet<Ingredient>(bestRecipe.getIngredients());
-			while (true) {
-				final Ingredient newIngredient = findEarliestExpiringIngredient(newIngredients);
-				final Ingredient bestIngredient = findEarliestExpiringIngredient(bestIngredients);
-
-				// Compare ingredients to current best recipe
-				if (newIngredient == null) {
-					// New recipe has no more ingredients. Favour the current best recipe.
-					continue recipeLoop;
-				}
-				if (bestIngredient == null) {
-					// New recipe has more ingredients. Favour recipe with more ingredients.
-					updateBestRecipe(bestRecipe, recipeName, newRecipeIngredients);
-					continue recipeLoop;
-				}
-				int compare = newIngredient.getUseBy().compareTo(bestIngredient.getUseBy());
-				if (compare > 0) {
-					// Best recipe is still the best. Check next recipe.
-					continue recipeLoop;
-				} else if (compare < 0) {
-					// Found earlier expiring item. Update best recipe.
-					updateBestRecipe(bestRecipe, recipeName, newRecipeIngredients);
-					continue recipeLoop;
-				} else {
-					// Remove both items from the lists and compare next earliest items
-					newIngredients.remove(newIngredient);
-					bestIngredients.remove(bestIngredient);
-				}
+			// Update the best recipe if the new recipe has better ingredients
+			if (hasBetterIngredients(newRecipeIngredients, bestRecipe.getIngredients())) {
+				updateBestRecipe(bestRecipe, recipeName, newRecipeIngredients);
 			}
 		}
 		return bestRecipe.getName();
 	}
 
-	private Ingredient findEarliestExpiringIngredient(Collection<Ingredient> ingredients) {
+	/**
+	 * Returns whether the new recipe ingredients will expire sooner than the best recipe ingredients
+	 * or if all dates are the same returns whether the new recipe has more ingredients.
+	 */
+	private boolean hasBetterIngredients(Collection<Ingredient> newRecipeIngredients, Collection<Ingredient> bestRecipeIngredients) {
+		// Copy the list of ingredients
+		final Collection<Ingredient> newIngredients = new HashSet<Ingredient>(newRecipeIngredients);
+		final Collection<Ingredient> bestIngredients = new HashSet<Ingredient>(bestRecipeIngredients);
+		// Compare the earliest expiring ingredient of each recipe, removing each ingredient from the collection after
+		// each comparison until eventually a difference is found or one recipe has more ingredients that the other.
+		while (true) {
+			final Ingredient newIngredient = findEarliestExpiringItem(newIngredients);
+			final Ingredient bestIngredient = findEarliestExpiringItem(bestIngredients);
+
+			// Favour the recipe with the most ingredients
+			if (newIngredient == null) {
+				return false;
+			}
+			if (bestIngredient == null) {
+				return true;
+			}
+
+			int compare = newIngredient.getUseBy().compareTo(bestIngredient.getUseBy());
+			if (compare < 0) {
+				// Found earlier expiring item. Update best recipe.
+				return true;
+			}
+			if (compare > 0) {
+				// Best recipe is still the best.
+				return false;
+			}
+			// Remove both items from the lists and compare next earliest expiring items
+			newIngredients.remove(newIngredient);
+			bestIngredients.remove(bestIngredient);
+		}
+	}
+
+	private Ingredient findEarliestExpiringItem(Collection<Ingredient> ingredients) {
 		if (ingredients == null) return null;
-		Ingredient earliestExpiringIngredient = null;
+		Ingredient earliestExpiringItem = null;
 		for (Ingredient ingredient : ingredients) {
-			if (earliestExpiringIngredient == null) {
-				earliestExpiringIngredient = ingredient;
-			} else if (ingredient.getUseBy().before(earliestExpiringIngredient.getUseBy())) {
-				earliestExpiringIngredient = ingredient;
+			if (earliestExpiringItem == null || ingredient.getUseBy().before(earliestExpiringItem.getUseBy())) {
+				earliestExpiringItem = ingredient;
 			}
 		}
-		return earliestExpiringIngredient;
+		return earliestExpiringItem;
 	}
 
 	private void updateBestRecipe(Recipe bestRecipe, String recipeName, Collection<Ingredient> newIngredients) {
