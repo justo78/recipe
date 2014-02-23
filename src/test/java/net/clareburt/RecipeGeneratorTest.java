@@ -127,6 +127,23 @@ public class RecipeGeneratorTest {
 		assertEquals("peanut butter sandwich", result);
 	}
 
+	@Test
+	public void shouldFavourRecipeWithMostIngredients() {
+		final ArrayList<Ingredient> fridgeItems = new ArrayList<Ingredient>();
+		fridgeItems.add(createIngredientWithDate("bread", 10, Unit.slices, "25/12/2014"));
+		fridgeItems.add(createIngredientWithDate("cheese", 10, Unit.slices, "25/12/2014"));
+		fridgeItems.add(createIngredientWithDate("butter", 250, Unit.grams, "25/12/2014"));
+		fridgeItems.add(createIngredientWithDate("peanut butter", 250, Unit.grams, "26/12/2014"));
+		fridgeItems.add(createIngredientWithDate("mixed salad", 150, Unit.grams, "27/12/2014"));
+
+		final ArrayList<Recipe> recipes = new ArrayList<Recipe>();
+		recipes.add(createToastRecipe("toast"));
+		recipes.add(createCheeseToastyRecipe("cheese toasty"));
+
+		final String result = recipeGenerator.generateRecipe(fridgeItems, recipes);
+		assertEquals("cheese toasty", result);
+	}
+
 	//-------- Helper methods --------
 
 	private ArrayList<Ingredient> createIngredients() {
