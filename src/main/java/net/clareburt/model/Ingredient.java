@@ -20,7 +20,7 @@ public class Ingredient {
 	public Ingredient() {
 	}
 
-	public Ingredient(String item, String amount, String unit, String useBy) {
+	public Ingredient(String item, String amount, String unit, String useBy) throws ParseException {
 		setItem(item);
 		setAmount(amount);
 		setUnit(Unit.valueOf(unit));
@@ -59,13 +59,9 @@ public class Ingredient {
 		return useBy;
 	}
 
-	public void setUseBy(String useByStr) {
+	public void setUseBy(String useByStr) throws ParseException {
 		if (useByStr == null) return;
-		try {
-			this.useBy = new SimpleDateFormat(DATE_FORMAT).parse(useByStr);
-		} catch (ParseException e) {
-			// TODO: Handle parse exception
-		}
+		this.useBy = new SimpleDateFormat(DATE_FORMAT).parse(useByStr);
 	}
 
 	@Override
